@@ -1,9 +1,16 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
-	"github.com/gin-gonic/gin"
+
+	_ "github.com/go-sql-driver/mysql"
 )
+
+var db*sql.DB
 
 func main(){
 	
