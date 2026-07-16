@@ -1,0 +1,5 @@
+go mod init go-backend
+go get github.com/gin-gonic/gin
+/// for backend
+
+read db_invent.sql for use database and table users
