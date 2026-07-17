@@ -1,5 +1,5 @@
-go mod init go-backend
-go get github.com/gin-gonic/gin
-/// for backend
+running on frontend npm run dev
+running on backend go run main.go
 
-read db_invent.sql for use database and table users
+db_invent => users 
+import db_invent terlebih dahulu, ganti .example menjadi .sql
