@@ -1,10 +1,10 @@
 'use client'; 
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation'; // 1. We import the router here
 
 export default function Home() {
-  const router = useRouter();
+  const router = useRouter(); // 2. We activate the router here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -24,6 +24,8 @@ export default function Home() {
       const data = await response.json();
       setMessage(data.message);
 
+      // 3. THIS IS THE MAGIC PART!
+      // If Go says the credentials are correct (Success: true), move to the dashboard.
       if (data.success) {
         router.push('/dashboard'); 
       }
@@ -35,8 +37,6 @@ export default function Home() {
 
   return (
     <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
-      
-      {/* Lighter glass effect: Changed bg-black/70 to bg-black/50 */}
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">
@@ -54,7 +54,7 @@ export default function Home() {
             <input 
               id="email"
               type="email" 
-              placeholder="Example@gmail.com" 
+              placeholder="user@gmail.com" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               className="bg-black/30 border border-white/30 text-white placeholder-gray-400 py-3 px-4 rounded-xl focus:outline-none focus:border-[#edde53] transition-colors" 
@@ -66,7 +66,7 @@ export default function Home() {
             <input 
               id="password"
               type="password" 
-              placeholder="Enter your password" 
+              placeholder="******" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
               className="bg-black/30 border border-white/30 text-white placeholder-gray-400 py-3 px-4 rounded-xl focus:outline-none focus:border-[#edde53] transition-colors" 
