@@ -1,5 +1,5 @@
-git remote add origin https://github.com/Yoshinovia/pra-pkl
-git pull origin main
+running on frontend npm run dev
+running on backend go run main.go
 
-//Kalo mau ganti nama main branch dari master ke "main"
-git branch -m master main
+db_invent => users 
+import db_invent terlebih dahulu, ganti .example menjadi .sql
