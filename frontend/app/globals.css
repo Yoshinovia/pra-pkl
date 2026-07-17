@@ -20,7 +20,8 @@
 }
 
 body {
-  background: linear-gradient(65deg, rgb(200, 14, 210), rgb(233, 9, 102));
+  background: #ffffff;
+  background: linear-gradient(147deg, rgba(255, 255, 255, 1) 0%, rgba(237, 222, 83, 1) 100%);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
