@@ -1,4 +1,5 @@
 import React from 'react';
+import Sidebar from '../components/dashboard/sidebar';
 
 export default function DashboardHome() {
   return (
@@ -6,19 +7,8 @@ export default function DashboardHome() {
     <div className="flex min-h-screen font-sans bg-gradient-to-r from-white to-[#edde53]">
       
       {/* 2. SIDEBAR - Tinted dark glass effect */}
-      <aside className="w-64 bg-black/60 text-white backdrop-blur-2xl border-r border-white/20 flex flex-col shadow-2xl">
-        <div className="p-6 border-b border-white/20">
-          <h1 className="text-xl font-bold tracking-wider text-[#edde53]">INV SYS</h1>
-          <p className="text-sm text-gray-300 mt-1">Inventory Manager</p>
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {/* Active state using the yellow accent color */}
-          <a href="#" className="block p-3 rounded-xl bg-[#edde53] text-black font-medium shadow-md">Dashboard</a>
-          <a href="#" className="block p-3 rounded-xl hover:bg-white/10 transition-colors text-gray-200">View Inventory</a>
-          <a href="#" className="block p-3 rounded-xl hover:bg-white/10 transition-colors text-gray-200">Manage Suppliers</a>
-          <a href="#" className="block p-3 rounded-xl hover:bg-white/10 transition-colors text-gray-200">Generate Reports</a>
-        </nav>
-      </aside>
+      {/* Make the sidebar as a reusable component */}
+      <Sidebar />
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 p-8">
