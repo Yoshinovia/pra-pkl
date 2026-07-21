@@ -24,14 +24,12 @@ export default function Home() {
       const data = await response.json();
       setMessage(data.message);
 
-      // 3. THIS IS THE MAGIC PART!
-      // If Go says the credentials are correct (Success: true), move to the dashboard.
       if (data.success) {
-        router.push('/dashboard'); 
+        router.push('/inventory'); 
       }
     } catch (error) {
       console.error("Gagal terhubung ke server:", error);
-      setMessage("Terjadi kesalahan pada server.");
+      setMessage("Check connection database.");
     }
   };
 
