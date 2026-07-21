@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
+    <main className="h-screen flex items-center justify-center bg-[url('/images/background-picsay.jpg.jpeg')] bg-cover bg-center bg-no-repeat">
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">
