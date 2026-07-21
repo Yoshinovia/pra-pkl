@@ -70,9 +70,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || storedPassword != req.Password {
 		w.WriteHeader(http.StatusUnauthorized)
 		res = LoginResponse{Message: "Email atau Password Salah", Success: false}
-	} else {
+	} 
+	if storedPassword == req.Password {
+		http.SetCookie(w, &http.Cookie{
+			Name:	"token",
+			Value:	"user_logged_in_token_123",
+			Path: 	"/",
+			HttpOnly: true,
+			Secure: false,
+			SameSite: http.SameSiteLaxMode,
+		})
 		w.WriteHeader(http.StatusOK)
-		res = LoginResponse{Message: "Login Berhasil!", Success: true}
+		res = LoginResponse{Message: "SUk masuk gees", Success: true}
 	}
 
 	json.NewEncoder(w).Encode(res)
