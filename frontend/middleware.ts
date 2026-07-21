@@ -5,21 +5,15 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   const { pathname } = request.nextUrl;
 
-//   route cuek
-  const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/reports');
+  const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/reports') || pathname.startsWith('/inventory') ;
 
   if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL('/', request.url)); 
-  }
-
-  if (pathname === '/' && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();
 }
 
-
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/reports/:path*'],
+  matcher: ['/dashboard/:path*', '/reports/:path*', '/inventory/:path*'],
 };

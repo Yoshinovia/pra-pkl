@@ -18,6 +18,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -25,7 +26,7 @@ export default function Home() {
       setMessage(data.message);
 
       if (data.success) {
-        router.push('/inventory'); 
+        router.push('/reports'); 
       }
     } catch (error) {
       console.error("Gagal terhubung ke server:", error);
