@@ -66,7 +66,7 @@ export default function Home() {
             <input 
               id="password"
               type="password" 
-              placeholder="******" 
+              placeholder="Enter your password" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
               className="bg-black/30 border border-white/30 text-white placeholder-gray-400 py-3 px-4 rounded-xl focus:outline-none focus:border-[#edde53] transition-colors" 
