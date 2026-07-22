@@ -11,6 +11,7 @@ export default function Home() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("1. Login button clicked. Sending request to Go...");
 
     try {
       const response = await fetch('http://localhost:8080/api/login', {
@@ -22,14 +23,24 @@ export default function Home() {
         body: JSON.stringify({ email, password }),
       });
 
+      console.log("2. Response received! HTTP Status Code:", response.status);
+
       const data = await response.json();
+      console.log("3. Data inside the response:", data);
       setMessage(data.message);
 
-      if (data.success) {
-        router.push('/reports'); 
+      if (response.ok) {
+        console.log("4. Status is OK! Creating cookie now...");
+        document.cookie = "token=valid_user; path=/; max-age=86400;"; 
+        
+        console.log("5. Cookie created! Redirecting to dashboard...");
+        router.push('/dashboard'); 
+      } else {
+        console.warn("4. FAILED: response.ok is false. The backend rejected the login.");
       }
+
     } catch (error) {
-      console.error("Gagal terhubung ke server:", error);
+      console.error("CRITICAL ERROR (Likely a CORS issue):", error);
       setMessage("Check connection database.");
     }
   };

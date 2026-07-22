@@ -88,12 +88,42 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+    // 1. Set the exact same CORS headers so Next.js is allowed to call this
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+
+    if r.Method == "OPTIONS" {
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+    // 2. Destroy the cookie by setting MaxAge to -1
+    http.SetCookie(w, &http.Cookie{
+        Name:     "token",
+        Value:    "",
+        Path:     "/",
+        HttpOnly: true,
+        Secure:   false,
+        SameSite: http.SameSiteLaxMode,
+        MaxAge:   -1, // This tells the browser to instantly delete the cookie
+    })
+
+    // 3. Send a success message back to the frontend
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]bool{"success": true})
+}
+
 func main() {
-	initDB()
-	defer db.Close()
+    initDB()
+    defer db.Close()
 
-	http.HandleFunc("/api/login", loginHandler)
+    http.HandleFunc("/api/login", loginHandler)
+    http.HandleFunc("/api/logout", logoutHandler) // <-- Add this line
 
-	fmt.Println("Backend Go berjalan di http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+    fmt.Println("Backend Go berjalan di http://localhost:8080")
+    log.Fatal(http.ListenAndServe(":8080", nil))
 }

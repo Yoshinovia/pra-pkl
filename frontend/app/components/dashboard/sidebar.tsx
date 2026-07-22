@@ -13,11 +13,21 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter(); // 2. Initialize the router
 
-  const handleLogout = () => {
-    // Note: Later on, you can add logic here to clear tokens or cookies
-    router.push("/"); // 3. Push the user back to the login page
-  };
+  const handleLogout = async () => {
+    try {
+      // 1. Tell the Go backend to destroy the HttpOnly cookie
+      await fetch('http://localhost:8080/api/logout', {
+        method: 'POST',
+        credentials: 'include', // This is required so Go knows WHICH cookie to delete
+      });
 
+      // 2. Clear Next.js memory and force the user back to the login page
+      window.location.href = "/"; 
+      
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
   return (
     <aside className="w-64 bg-black/60 text-white backdrop-blur-2xl border-r border-white/20 flex flex-col shadow-2xl">
       <div className="p-6 border-b border-white/20">
