@@ -1,53 +1,47 @@
 import React from 'react';
 import Sidebar from '../components/dashboard/sidebar';
+import Link from 'next/link';
+import { getDashboardStats } from '../lib/api';
 
-export default function DashboardHome() {
+export default async function DashboardHome() {
+  const stats = await getDashboardStats();
+
   return (
-    // 1. Applied the same background gradient as the login page
     <div className="flex min-h-screen font-sans bg-gradient-to-r from-white to-[#edde53]">
-      
-      {/* 2. SIDEBAR - Tinted dark glass effect */}
-      {/* Make the sidebar as a reusable component */}
       <Sidebar />
 
-      {/* MAIN CONTENT AREA */}
       <main className="flex-1 p-8">
-        
-        {/* Header - Using dark text because it sits directly on the light gradient background */}
         <header className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Overview</h2>
             <p className="text-gray-700 text-sm mt-1">Welcome back. Here is your inventory status.</p>
           </div>
-          {/* Primary Action Button matching the login button style */}
-          <button className="bg-[#edde53] hover:bg-yellow-400 text-black font-bold px-5 py-3 rounded-xl shadow-lg transition-colors border border-yellow-300">
+          <Link href="/inventory" className="bg-[#edde53] hover:bg-yellow-400 text-black font-bold px-5 py-3 rounded-xl shadow-lg transition-colors border border-yellow-300 inline-block">
             + Add New Product
-          </button>
+          </Link>
         </header>
 
-        {/* 3. KPI RIBBON (Stats Cards) - Tinted glass effect */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20">
             <h3 className="text-gray-300 text-sm font-semibold mb-1">Total Products</h3>
-            <p className="text-3xl font-bold text-white">1,248</p>
+            <p className="text-3xl font-bold text-white">{stats.totalProducts.toLocaleString()}</p>
           </div>
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20 border-l-4 border-l-red-500">
             <h3 className="text-red-400 text-sm font-semibold mb-1">Low Stock Alerts</h3>
-            <p className="text-3xl font-bold text-red-400">12</p>
+            <p className="text-3xl font-bold text-red-400">{stats.lowStockCount}</p>
           </div>
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20 border-l-4 border-l-orange-400">
-            <h3 className="text-orange-300 text-sm font-semibold mb-1">Expiring Soon (30 Days)</h3>
-            <p className="text-3xl font-bold text-orange-300">5</p>
+            <h3 className="text-orange-300 text-sm font-semibold mb-1">Expiring Soon</h3>
+            <p className="text-3xl font-bold text-orange-300">{stats.expiringCount}</p>
           </div>
         </div>
 
-        {/* 4. MAIN DATA VIEW (Alerts & Activity) - Tinted glass table */}
         <div className="bg-black/50 text-white backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
           <div className="p-5 border-b border-white/20 bg-black/20 flex justify-between items-center">
             <h3 className="font-semibold text-lg tracking-wide">Action Required: Low Stock</h3>
-            <button className="text-sm text-[#edde53] font-medium hover:underline">View All Alerts</button>
+            <Link href="/alerts" className="text-sm text-[#edde53] font-medium hover:underline">View All Alerts</Link>
           </div>
-          
+
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/20 text-sm text-gray-300 bg-black/30">
@@ -59,24 +53,22 @@ export default function DashboardHome() {
               </tr>
             </thead>
             <tbody className="text-sm">
-              <tr className="border-b border-white/10 hover:bg-white/5 transition-colors">
-                <td className="p-4 font-medium text-white">Industrial Bearings (12mm)</td>
-                <td className="p-4 text-gray-400">BRG-12-IND</td>
-                <td className="p-4 text-red-400 font-bold">4</td>
-                <td className="p-4 text-gray-400">20</td>
-                <td className="p-4 text-right">
-                  <button className="text-black bg-[#edde53] hover:bg-yellow-400 px-4 py-1.5 rounded-lg transition-colors font-medium">Order</button>
-                </td>
-              </tr>
-              <tr className="hover:bg-white/5 transition-colors">
-                <td className="p-4 font-medium text-white">Synthetic Lubricant 5L</td>
-                <td className="p-4 text-gray-400">LUB-SYN-5L</td>
-                <td className="p-4 text-red-400 font-bold">1</td>
-                <td className="p-4 text-gray-400">15</td>
-                <td className="p-4 text-right">
-                  <button className="text-black bg-[#edde53] hover:bg-yellow-400 px-4 py-1.5 rounded-lg transition-colors font-medium">Order</button>
-                </td>
-              </tr>
+              {stats.recentAlerts.filter(a => a.type === 'low_stock').map((alert) => (
+                <tr key={alert.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                  <td className="p-4 font-medium text-white">{alert.product_name}</td>
+                  <td className="p-4 text-gray-400">{alert.product_id}</td>
+                  <td className="p-4 text-red-400 font-bold">{alert.current_stock}</td>
+                  <td className="p-4 text-gray-400">{alert.reorder_point}</td>
+                  <td className="p-4 text-right">
+                    <Link href="/inventory" className="text-black bg-[#edde53] hover:bg-yellow-400 px-4 py-1.5 rounded-lg transition-colors font-medium inline-block">Order</Link>
+                  </td>
+                </tr>
+              ))}
+              {stats.recentAlerts.filter(a => a.type === 'low_stock').length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-400">No low stock alerts.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

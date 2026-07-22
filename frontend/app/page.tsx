@@ -1,17 +1,17 @@
-'use client'; 
+'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // 1. We import the router here
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const router = useRouter(); // 2. We activate the router here
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("1. Login button clicked. Sending request to Go...");
 
     try {
       const response = await fetch('http://localhost:8080/api/login', {
@@ -26,27 +26,21 @@ export default function Home() {
       console.log("2. Response received! HTTP Status Code:", response.status);
 
       const data = await response.json();
-      console.log("3. Data inside the response:", data);
       setMessage(data.message);
 
-      if (response.ok) {
-        console.log("4. Status is OK! Creating cookie now...");
-        document.cookie = "token=valid_user; path=/; max-age=86400;"; 
-        
-        console.log("5. Cookie created! Redirecting to dashboard...");
+      // 3. THIS IS THE MAGIC PART!
+      // If Go says the credentials are correct (Success: true), move to the dashboard.
+      if (data.success) {
         router.push('/dashboard'); 
-      } else {
-        console.warn("4. FAILED: response.ok is false. The backend rejected the login.");
       }
-
     } catch (error) {
-      console.error("CRITICAL ERROR (Likely a CORS issue):", error);
-      setMessage("Check connection database.");
+      console.error("Gagal terhubung ke server:", error);
+      setMessage("Terjadi kesalahan pada server.");
     }
   };
 
   return (
-    <main className="h-screen flex items-center justify-center bg-[url('/images/background-picsay.jpg.jpeg')] bg-cover bg-center bg-no-repeat">
+    <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">
@@ -83,11 +77,12 @@ export default function Home() {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="w-full bg-[#edde53] hover:bg-yellow-400 text-black font-bold py-3 mt-4 rounded-xl transition-colors shadow-lg"
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#edde53] hover:bg-yellow-400 disabled:bg-yellow-400/60 text-black font-bold py-3 mt-4 rounded-xl transition-colors shadow-lg cursor-pointer"
           >
-            Sign In
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
         </form>
