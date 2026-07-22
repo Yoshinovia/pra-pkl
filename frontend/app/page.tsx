@@ -10,36 +10,34 @@ export default function Home() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage('');
 
     try {
       const response = await fetch('http://localhost:8080/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
       });
 
+      console.log("2. Response received! HTTP Status Code:", response.status);
+
       const data = await response.json();
+      setMessage(data.message);
+
+      // 3. THIS IS THE MAGIC PART!
+      // If Go says the credentials are correct (Success: true), move to the dashboard.
       if (data.success) {
-        const name = email === 'admin@example.com' ? 'Admin' : email.split('@')[0];
-        const role = email === 'admin@example.com' ? 'admin' : 'inventory_manager';
-        localStorage.setItem('user', JSON.stringify({ name, email, role }));
-        document.cookie = 'token=authenticated; path=/; max-age=86400';
-        window.location.href = '/dashboard';
-      } else {
-        setMessage(data.message || 'Email atau Password Salah');
+        router.push('/dashboard'); 
       }
-    } catch {
-      setMessage('Gagal terhubung ke server.');
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Gagal terhubung ke server:", error);
+      setMessage("Terjadi kesalahan pada server.");
     }
   };
 
   return (
-    <main className="h-screen flex items-center justify-center bg-[url('/images/Background-picsay.jpg.jpeg')] bg-cover bg-center bg-no-repeat">
+    <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">

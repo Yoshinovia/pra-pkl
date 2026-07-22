@@ -23,12 +23,19 @@ export default function Sidebar() {
 
   const isAdmin = user?.role === 'admin';
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:8080/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
     localStorage.removeItem('user');
     document.cookie = 'token=; path=/; max-age=0';
-    router.push("/");
+    window.location.href = "/";
   };
-
   return (
     <aside className="w-64 bg-black/60 text-white backdrop-blur-2xl border-r border-white/20 flex flex-col shadow-2xl">
       <div className="p-6 border-b border-white/20">
