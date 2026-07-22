@@ -66,8 +66,6 @@ func createInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(created)
-<<<<<<< HEAD
-=======
 }
 
 func deleteInventoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -115,5 +113,4 @@ func deleteInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]bool{"success": true})
->>>>>>> 55131392f35b01e032b9f2f133be42b26b8834b9
 }
