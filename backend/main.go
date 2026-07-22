@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,17 +10,6 @@ import (
 )
 
 var db *sql.DB
-
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type LoginResponse struct {
-	Message string `json:"message"`
-	Success bool   `json:"success"`
-}
-
 func initDB() {
 	var err error
 	// Format: username:password@tcp(127.0.0.1:3306)/nama_database
@@ -37,92 +25,13 @@ func initDB() {
 	fmt.Println("Koneksi MySQL Berhasil!")
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
-	if r.Method != "POST" {
-		http.Error(w, "Method tidak diizinkan", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var req LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Cek user di MySQL
-	var storedPassword string
-	query := "SELECT password FROM users WHERE email = ?"
-	err = db.QueryRow(query, req.Email).Scan(&storedPassword)
-
-	w.Header().Set("Content-Type", "application/json")
-	var res LoginResponse
-
-	if err != nil || storedPassword != req.Password {
-		w.WriteHeader(http.StatusUnauthorized)
-		res = LoginResponse{Message: "Email atau Password Salah", Success: false}
-	} 
-	if storedPassword == req.Password {
-		http.SetCookie(w, &http.Cookie{
-			Name:	"token",
-			Value:	"user_logged_in_token_123",
-			Path: 	"/",
-			HttpOnly: true,
-			Secure: false,
-			SameSite: http.SameSiteLaxMode,
-		})
-		w.WriteHeader(http.StatusOK)
-		res = LoginResponse{Message: "SUk masuk gees", Success: true}
-	}
-
-	json.NewEncoder(w).Encode(res)
-}
-
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
-    // 1. Set the exact same CORS headers so Next.js is allowed to call this
-    w.Header().Set("Access-Control-Allow-Credentials", "true")
-    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-
-    if r.Method == "OPTIONS" {
-        w.WriteHeader(http.StatusOK)
-        return
-    }
-
-    // 2. Destroy the cookie by setting MaxAge to -1
-    http.SetCookie(w, &http.Cookie{
-        Name:     "token",
-        Value:    "",
-        Path:     "/",
-        HttpOnly: true,
-        Secure:   false,
-        SameSite: http.SameSiteLaxMode,
-        MaxAge:   -1, // This tells the browser to instantly delete the cookie
-    })
-
-    // 3. Send a success message back to the frontend
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]bool{"success": true})
-}
-
 func main() {
     initDB()
     defer db.Close()
 
     http.HandleFunc("/api/login", loginHandler)
     http.HandleFunc("/api/logout", logoutHandler) // <-- Add this line
+    http.HandleFunc("/api/inventory", createInventoryHandler)
 
     fmt.Println("Backend Go berjalan di http://localhost:8080")
     log.Fatal(http.ListenAndServe(":8080", nil))
