@@ -1,21 +1,32 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // 1. Import useRouter
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/inventory", label: "View Inventory" },
   { href: "/suppliers", label: "Manage Suppliers" },
   { href: "/reports", label: "Generate Reports" },
+  { href: "/alerts", label: "Stock Alerts" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter(); // 2. Initialize the router
+  const router = useRouter();
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) setUser(JSON.parse(stored));
+  }, []);
+
+  const isAdmin = user?.role === 'admin';
 
   const handleLogout = () => {
-    // Note: Later on, you can add logic here to clear tokens or cookies
-    router.push("/"); // 3. Push the user back to the login page
+    localStorage.removeItem('user');
+    document.cookie = 'token=; path=/; max-age=0';
+    router.push("/");
   };
 
   return (
@@ -24,10 +35,9 @@ export default function Sidebar() {
         <h1 className="text-xl font-bold tracking-wider text-[#edde53]">
           Inventory Kreanova
         </h1>
-        <p className="text-sm text-gray-300 mt-1">Inventory Manager</p>
+        {user && <p className="text-sm text-gray-300 mt-1">{user.name}</p>}
       </div>
-      
-      {/* Navigation Links - flex-1 pushes everything below it to the bottom */}
+
       <nav className="flex-1 p-4 space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -46,9 +56,20 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className={`block p-3 rounded-xl font-medium transition-colors ${
+              pathname === "/admin"
+                ? "bg-[#edde53] text-black shadow-md"
+                : "text-gray-200 hover:bg-white/10"
+            }`}
+          >
+            Admin Panel
+          </Link>
+        )}
       </nav>
 
-      {/* 4. Logout Button Section - Pinned to bottom */}
       <div className="p-4 border-t border-white/20">
         <button
           onClick={handleLogout}

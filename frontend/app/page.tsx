@@ -1,42 +1,45 @@
-'use client'; 
+'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // 1. We import the router here
 
 export default function Home() {
-  const router = useRouter(); // 2. We activate the router here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
 
     try {
       const response = await fetch('http://localhost:8080/api/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-      setMessage(data.message);
-
-      // 3. THIS IS THE MAGIC PART!
-      // If Go says the credentials are correct (Success: true), move to the dashboard.
       if (data.success) {
-        router.push('/dashboard'); 
+        const name = email === 'admin@example.com' ? 'Admin' : email.split('@')[0];
+        const role = email === 'admin@example.com' ? 'admin' : 'inventory_manager';
+        localStorage.setItem('user', JSON.stringify({ name, email, role }));
+        document.cookie = 'token=authenticated; path=/; max-age=86400';
+        window.location.href = '/dashboard';
+      } else {
+        setMessage(data.message || 'Email atau Password Salah');
       }
-    } catch (error) {
-      console.error("Gagal terhubung ke server:", error);
-      setMessage("Terjadi kesalahan pada server.");
+    } catch {
+      setMessage('Gagal terhubung ke server.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
+    <main className="h-screen flex items-center justify-center bg-[url('/images/Background-picsay.jpg.jpeg')] bg-cover bg-center bg-no-repeat">
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">
@@ -73,11 +76,12 @@ export default function Home() {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="w-full bg-[#edde53] hover:bg-yellow-400 text-black font-bold py-3 mt-4 rounded-xl transition-colors shadow-lg"
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#edde53] hover:bg-yellow-400 disabled:bg-yellow-400/60 text-black font-bold py-3 mt-4 rounded-xl transition-colors shadow-lg cursor-pointer"
           >
-            Sign In
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
         </form>
