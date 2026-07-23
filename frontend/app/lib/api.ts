@@ -34,7 +34,6 @@ export async function getProducts(): Promise<Product[]> {
   return rawData.map((item: any) => ({
     id: item.id,
     name: item.name,
-    sku: item.sku || `SKU-${item.id}`,
     category: item.category,
     price: item.price,
     quantity: item.stock, // Memetakan field 'stock' Go ke 'quantity' React

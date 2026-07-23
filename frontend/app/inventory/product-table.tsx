@@ -108,7 +108,6 @@ export default function ProductTable({ initialProducts }: ProductTableProps) {
             <thead>
               <tr className="border-b border-white/20 text-sm text-gray-300 bg-black/30">
                 <th className="px-6 py-4 font-semibold">Product</th>
-                <th className="px-6 py-4 font-semibold">SKU</th>
                 <th className="px-6 py-4 font-semibold">Category</th>
                 <th className="px-6 py-4 font-semibold">Stock</th>
                 <th className="px-6 py-4 font-semibold">Price</th>
@@ -122,7 +121,6 @@ export default function ProductTable({ initialProducts }: ProductTableProps) {
                 return (
                   <tr key={p.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4 font-medium text-white">{p.name}</td>
-                    <td className="px-6 py-4 text-gray-400 text-sm">{p.sku}</td>
                     <td className="px-6 py-4 text-gray-300">{p.category}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
