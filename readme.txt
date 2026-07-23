@@ -3,3 +3,12 @@ running on backend go run main.go
 
 db_invent => users 
 import db_invent terlebih dahulu, ganti .example menjadi .sql
+
+////////////////////////////////
+go get github.com/joho/godotenv
+
+godot env for backend
+/////////////////////////////
+
+lihat env.example kemudian copy filenya menjadi .env denagan nama user, pass dan db yang sesuai man teman
+biar aman ajah
