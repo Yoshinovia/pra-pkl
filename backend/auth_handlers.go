@@ -12,7 +12,6 @@ type LoginRequest struct {
 
 type User struct {
     ID    int    `json:"id"`
-    Name  string `json:"name"`
     Email string `json:"email"`
     Role  string `json:"role"`
 }
@@ -48,14 +47,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
     var (
         userID          int
-        userName        string
         userEmail       string
         storedPassword  string
         userRole        string
     )
 
-    query := "SELECT id, name, email, password, role FROM users WHERE email = ?"
-    err = db.QueryRow(query, req.Email).Scan(&userID, &userName, &userEmail, &storedPassword, &userRole)
+    query := "SELECT id, email, password, role FROM users WHERE email = ?"
+    err = db.QueryRow(query, req.Email).Scan(&userID, &userEmail, &storedPassword, &userRole)
 
     w.Header().Set("Content-Type", "application/json")
 
@@ -91,7 +89,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
         Success: true,
         User: &User{
             ID:    userID,
-            Name:  userName,
             Email: userEmail,
             Role:  userRole,
         },

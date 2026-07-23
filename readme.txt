@@ -12,3 +12,6 @@ godot env for backend
 
 lihat env.example kemudian copy filenya menjadi .env denagan nama user, pass dan db yang sesuai man teman
 biar aman ajah
+buat role baru inventory_manager 
+
+67 yang admin@example langsung ke admin sekarang

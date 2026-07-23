@@ -15,6 +15,7 @@ export default function Home() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await fetch('http://localhost:8080/api/login', {
@@ -26,19 +27,25 @@ export default function Home() {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log("2. Response received! HTTP Status Code:", response.status);
-
       const data = await response.json();
       setMessage(data.message);
 
-      // 3. THIS IS THE MAGIC PART!
-      // If Go says the credentials are correct (Success: true), move to the dashboard.
-      if (data.success) {
-        router.push('/dashboard'); 
+      if (data.success && data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        if (data.user.role === 'admin') {
+          router.push('/admin');
+        } else if (data.user.role === 'inventory_manager') {
+          router.push('/dashboard');
+        } else {
+          router.push('/');
+        }
       }
     } catch (error) {
-      console.error("Gagal terhubung ke server:", error);
-      setMessage("Terjadi kesalahan pada server.");
+      console.error('Gagal terhubung ke server:', error);
+      setMessage('Terjadi kesalahan pada server.');
+    } finally {
+      setLoading(false);
     }
   };
 
