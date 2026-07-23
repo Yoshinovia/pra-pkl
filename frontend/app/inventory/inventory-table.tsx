@@ -12,7 +12,7 @@ interface InventoryTableProps {
   initialItems: Inventory[]
 }
 
-const categories = ['All', 'Electronics', 'Accessories', 'Furniture', 'Machinery Parts', 'Chemicals', 'Supplies', 'Safety']
+const categories = ['All', 'Vitamins & Supplements', 'Traditional / Herbal Medicine', 'Over-The-Counter', 'Prescription Medicine', 'First Aid']
 const statusOptions = ['active', 'inactive']
 
 export default function InventoryTable({ initialItems }: InventoryTableProps) {
@@ -27,7 +27,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
   const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState<InventoryPayload>({
-    name: '', category: 'Electronics', stock: 0, price: 0, status: 'active',
+    name: '', category: 'Vitamins & Supplements', stock: 0, price: 0, status: 'active',
   })
 
   const filtered = items.filter(item => {
@@ -37,7 +37,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
   })
 
   function openAdd() {
-    setForm({ name: '', category: 'Electronics', stock: 0, price: 0, status: 'active' })
+    setForm({ name: '', category: 'Vitamins & Supplements', stock: 0, price: 0, status: 'active' })
     setError(null)
     setModalMode('add')
   }
