@@ -1,10 +1,12 @@
 import type { Product, Supplier, StockAlert, ActivityLog, Movement, DashboardStats, User } from './types'
 import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
+import type { Inventory, InventoryPayload } from './types'
 
 function delay(ms: number = 150): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
 }
 const BASE_URL = 'http://localhost:8080/api'
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080'
 let _products = [...products]
 let _suppliers = [...suppliers]
 let _alerts = [...stockAlerts]
@@ -14,6 +16,53 @@ let _nextProductId = 1
 let _nextSupplierId = 6
 let _nextAlertId = 7
 let _nextLogId = 16
+
+async function handle<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText)
+    throw new Error(text || `Request gagal (${res.status})`)
+  }
+  return res.json() as Promise<T>
+}
+
+export async function getInventories(): Promise<Inventory[]> {
+  const res = await fetch(`${API_BASE}/api/inventory/get`, {
+    credentials: 'include',
+    cache: 'no-store',
+  })
+  return handle<Inventory[]>(res)
+}
+
+export async function createInventory(payload: InventoryPayload): Promise<Inventory> {
+  const res = await fetch(`${API_BASE}/api/inventory`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  return handle<Inventory>(res)
+}
+
+export async function updateInventory(id: number, payload: InventoryPayload): Promise<Inventory> {
+  const res = await fetch(`${API_BASE}/api/inventory/update?id=${id}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  return handle<Inventory>(res)
+}
+
+export async function deleteInventory(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/inventory/delete?id=${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText)
+    throw new Error(text || `Gagal menghapus (${res.status})`)
+  }
+}
 
 export async function login(email: string, password: string): Promise<{ user: User; token: string } | null> {
   await delay(300)
@@ -30,13 +79,12 @@ export async function getProducts(): Promise<Product[]> {
   
   const rawData = await res.json()
   
-  // Mapping field dari DB Go (stock -> quantity, dll.)
   return rawData.map((item: any) => ({
     id: item.id,
     name: item.name,
     category: item.category,
     price: item.price,
-    quantity: item.stock, // Memetakan field 'stock' Go ke 'quantity' React
+    quantity: item.stock, 
     reorder_point: item.reorder_point || 0,
     supplier_id: item.supplier_id || 1,
     status: item.status

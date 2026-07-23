@@ -31,6 +31,34 @@ export interface Supplier {
   products_supplied: number
   status: 'active' | 'inactive'
 }
+export interface Inventory {
+  id: number
+  name: string
+  category: string
+  stock: number
+  price: number
+  status: string
+}
+
+
+export interface InventoryPayload {
+  name?: string
+  category?: string
+  stock?: number
+  price?: number
+  status?: string
+}
+
+// Threshold stok rendah murni untuk tampilan (backend tidak punya reorder_point).
+const LOW_STOCK_THRESHOLD = 10
+
+export type StockLevel = 'Out of Stock' | 'Low Stock' | 'In Stock'
+
+export function getStockLevel(item: Inventory): StockLevel {
+  if (item.stock <= 0) return 'Out of Stock'
+  if (item.stock < LOW_STOCK_THRESHOLD) return 'Low Stock'
+  return 'In Stock'
+}
 
 export interface StockAlert {
   id: number
