@@ -1,9 +1,9 @@
 import Sidebar from "../components/dashboard/sidebar";
-import ProductTable from "./product-table";
-import { getProducts } from "../lib/api";
+import InventoryTable from "./inventory-table";
+import { getInventories } from "../lib/api";
 
-export default async function Inventory() {
-  const products = await getProducts();
+export default async function InventoryPage() {
+  const items = await getInventories();
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-r from-white to-[#edde53]">
@@ -22,13 +22,13 @@ export default async function Inventory() {
         <div className="gap-6 mb-8">
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20">
             <h3 className="text-gray-300 text-sm font-semibold mb-1">
-              Total Products
+              Total Items
             </h3>
-            <p className="text-3xl font-bold text-white">{products.length.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-white">{items.length.toLocaleString()}</p>
           </div>
         </div>
 
-        <ProductTable initialProducts={products} />
+        <InventoryTable initialItems={items} />
       </main>
     </div>
   );
