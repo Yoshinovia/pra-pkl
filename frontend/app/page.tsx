@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
@@ -9,6 +11,7 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +43,13 @@ export default function Home() {
   };
 
   return (
-    <main className="h-screen flex items-center justify-center bg-gradient-to-r from-white to-[#edde53]">
+    <main className="h-screen flex items-center justify-center">
+      <Image 
+        src="/images/Background-picsay.jpg.jpeg"
+        alt='background'
+        fill
+        priority
+        className='object-cover -z-10'/>
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
         <div className="flex items-center justify-center">
@@ -67,14 +76,24 @@ export default function Home() {
 
           <div className="flex flex-col gap-2 w-full">
             <label htmlFor="password" className="text-sm text-gray-200">Password</label>
-            <input 
-              id="password"
-              type="password" 
-              placeholder="Enter your password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              className="bg-black/30 border border-white/30 text-white placeholder-gray-400 py-3 px-4 rounded-xl focus:outline-none focus:border-[#edde53] transition-colors" 
-            />
+            <div className="relative w-full">
+              <input 
+                id="password"
+                type={showPassword ? 'text' : 'password'} 
+                placeholder="Enter your password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                className="bg-black/30 border border-white/30 text-white placeholder-gray-400 py-3 px-4 pr-11 rounded-xl focus:outline-none focus:border-[#edde53] transition-colors w-full" 
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           <button
