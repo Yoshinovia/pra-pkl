@@ -5,15 +5,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 var db *sql.DB
 
 func initDB() {
+	if err := godotenv.Load(); err != nil{
+		log.Println("Peringatan: File .env tidak ditemukan, kalau ga ada. Buat dulu guys")
+	}
+
+	dbUser := getEnv("DB_USER", "")
+	dbPass := getEnv("DB_PASS", "")
+	dbHost := getEnv("DB_HOST", "127.0.0.1")
+	dbPort := getEnv("DB_PORT", "3306")
+	dbName := getEnv("DB_NAME", "")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
+
 	var err error
-	dsn := "root:@tcp(127.0.0.1:3306)/db_invent"
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
@@ -23,6 +36,13 @@ func initDB() {
 		log.Fatal(err)
 	}
 	fmt.Println("Koneksi MySQL Berhasil!")
+}
+
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }
 
 func main() {
