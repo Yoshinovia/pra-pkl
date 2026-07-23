@@ -33,6 +33,7 @@ func main() {
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/inventory", createInventoryHandler)
 	http.HandleFunc("/api/inventory/delete", deleteInventoryHandler)
+	http.HandleFunc("/api/inventory/get", getInventoriesHandler)
 
 	fmt.Println("Backend Go berjalan di http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
