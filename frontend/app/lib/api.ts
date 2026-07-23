@@ -4,7 +4,7 @@ import { users, products, suppliers, stockAlerts, activityLogs, movements } from
 function delay(ms: number = 150): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
 }
-
+const BASE_URL = 'http://localhost:8080/api'
 let _products = [...products]
 let _suppliers = [...suppliers]
 let _alerts = [...stockAlerts]
@@ -24,18 +24,25 @@ export async function login(email: string, password: string): Promise<{ user: Us
   return { user: safeUser as User, token: `mock-jwt-${user.id}-${user.role}` }
 }
 
-export async function getProducts(search?: string, category?: string, supplierId?: number): Promise<Product[]> {
-  await delay()
-  let result = [..._products]
-  if (search) {
-    const q = search.toLowerCase()
-    result = result.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.category.toLowerCase().includes(q))
-  }
-  if (category && category !== 'All') result = result.filter(p => p.category === category)
-  if (supplierId) result = result.filter(p => p.supplier_id === supplierId)
-  return result.map(p => ({ ...p, supplier_name: _suppliers.find(s => s.id === p.supplier_id)?.name }))
+export async function getProducts(): Promise<Product[]> {
+  const res = await fetch(`${BASE_URL}/inventory/get`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Gagal mengambil data dari server')
+  
+  const rawData = await res.json()
+  
+  // Mapping field dari DB Go (stock -> quantity, dll.)
+  return rawData.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    sku: item.sku || `SKU-${item.id}`,
+    category: item.category,
+    price: item.price,
+    quantity: item.stock, // Memetakan field 'stock' Go ke 'quantity' React
+    reorder_point: item.reorder_point || 0,
+    supplier_id: item.supplier_id || 1,
+    status: item.status
+  }))
 }
-
 export async function getProduct(id: string): Promise<Product | null> {
   await delay()
   const p = _products.find(p => p.id === id)
