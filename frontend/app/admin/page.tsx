@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '../components/dashboard/sidebar'
 import Modal from '../components/ui/modal'
-import { getUsers, logAction } from '../lib/api'
+import { getUsers, logAction, createUser, getActivityLogs } from '../lib/api'
 import type { User } from '../lib/types'
+
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -14,26 +15,37 @@ export default function AdminPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
+useEffect(() => {
     getUsers().then(setUsers)
-    import('../lib/api').then(m => m.getActivityLogs().then(setLogs))
-  }, [])
+    getActivityLogs().then(setLogs)
+}, [])
 
   const managers = users.filter(u => u.role === 'inventory_manager')
 
   async function handleCreate(e: React.FormEvent) {
-    e.preventDefault()
-    if (!form.name || !form.email || !form.password) {
-      setMessage('All fields are required.')
-      return
-    }
+  e.preventDefault()
+  if (!form.name || !form.email || !form.password) {
+    setMessage('All fields are required.')
+    return
+  }
+  
+  try {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+    // Create the user in database
+    await createUser(form.name, form.email, form.password)
+    // Log the action
     await logAction(currentUser.id || 0, currentUser.name || '', 'Create User', 'User', `Created inventory manager account for ${form.name} (${form.email})`)
-    setMessage(`Manager "${form.name}" created successfully! (Mock: account saved to session)`)
+    // Refresh users list
+    const updatedUsers = await getUsers()
+    setUsers(updatedUsers)
+    setMessage(`Manager "${form.name}" created successfully!`)
     setForm({ name: '', email: '', password: '' })
     setTimeout(() => setMessage(''), 3000)
     setShowCreate(false)
+  } catch (error) {
+    setMessage(`Error creating manager: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
+}
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-r from-white to-[#edde53]">
@@ -102,7 +114,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {logs.map(log => (
+                  {logs?.map(log => (
                     <tr key={log.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
                       <td className="px-6 py-4 text-white font-medium">{log.user_name}</td>
                       <td className="px-6 py-4">
