@@ -33,7 +33,21 @@ SET time_zone = "+00:00";
 ALTER TABLE users 
 ADD COLUMN role ENUM('admin', 'inventory_manager') NOT NULL DEFAULT 'admin';
 
+//////////////////////// CREATE TABLE ////////////////////////////
 
+CREATE TABLE `suppliers` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `contact_person` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(50) NOT NULL,
+  `products_supplied` int NOT NULL DEFAULT '0',
+  `status` varchar(50) NOT NULL DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `products_supplied`, `status`) VALUES
+(1, 'PT ABCD', '+62081234567890', 'email@gmail.com', '+62081234567890', 5, 'active'),
+(2, 'PT ABCDE', '+62081234567890', 'email1@gmail.com', '+62081234567890', 5, 'active');
 
 
 CREATE TABLE `inventory` (
