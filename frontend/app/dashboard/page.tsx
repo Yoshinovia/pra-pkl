@@ -46,9 +46,8 @@ export default async function DashboardHome() {
             <thead>
               <tr className="border-b border-white/20 text-sm text-gray-300 bg-black/30">
                 <th className="p-4 font-medium">Product Name</th>
-                <th className="p-4 font-medium">SKU</th>
+                <th className="p-4 font-medium">Category</th>
                 <th className="p-4 font-medium">Current Stock</th>
-                <th className="p-4 font-medium">Reorder Point</th>
                 <th className="p-4 font-medium text-right">Action</th>
               </tr>
             </thead>
@@ -58,9 +57,8 @@ export default async function DashboardHome() {
                   <td className="p-4 font-medium text-white">{alert.product_name}</td>
                   <td className="p-4 text-gray-400">{alert.product_id}</td>
                   <td className="p-4 text-red-400 font-bold">{alert.current_stock}</td>
-                  <td className="p-4 text-gray-400">{alert.reorder_point}</td>
                   <td className="p-4 text-right">
-                    <Link href="/inventory" className="text-black bg-[#edde53] hover:bg-yellow-400 px-4 py-1.5 rounded-lg transition-colors font-medium inline-block">Order</Link>
+                    <Link href="/inventory" className="text-black bg-[#edde53] hover:bg-yellow-400 px-4 py-1.5 rounded-lg transition-colors font-medium inline-block">View</Link>
                   </td>
                 </tr>
               ))}

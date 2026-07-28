@@ -144,7 +144,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
                         <button onClick={() => adjustStock(item, 1)} className="w-6 h-6 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 text-gray-300 text-sm transition-colors">+</button>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-300">${item.price.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-gray-300">Rp. {item.price.toFixed(2)}</td>
                     <td className="px-6 py-4"><StatusBadge status={level} /></td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
                       <button onClick={() => openEdit(item)} className="text-[#edde53] hover:text-yellow-300 text-sm font-medium mr-3 transition-colors">Edit</button>
