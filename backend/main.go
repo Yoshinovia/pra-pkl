@@ -63,7 +63,12 @@ func main() {
 	http.HandleFunc("/api/suppliers/create", createSupplierHandler)
 	http.HandleFunc("/api/suppliers/update", updateSupplierHandler)
 	http.HandleFunc("/api/suppliers/delete", deleteSupplierHandler)
-	
+
+	// Route for Admin
+	http.HandleFunc("/api/users", getUsersHandler)
+	http.HandleFunc("/api/users/create", createUserHandler)
+	http.HandleFunc("/api/activity-logs", getActivityLogsHandler)
+	http.HandleFunc("/api/activity-logs/create", createActivityLogHandler)
 
 	fmt.Println("Backend Go berjalan di http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

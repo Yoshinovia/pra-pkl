@@ -30,10 +30,21 @@ SET time_zone = "+00:00";
 
 //////////////////////// ALTER TABLE ////////////////////////////
 
-ALTER TABLE users 
-ADD COLUMN role ENUM('admin', 'inventory_manager') NOT NULL DEFAULT 'admin';
+ALTER TABLE users ADD COLUMN name VARCHAR(255);
+ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'inventory_manager';
+ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 //////////////////////// CREATE TABLE ////////////////////////////
+CREATE TABLE IF NOT EXISTS activity_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  user_name VARCHAR(255) NOT NULL,
+  action VARCHAR(100) NOT NULL,
+  target_entity VARCHAR(100) NOT NULL,
+  details TEXT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
 CREATE TABLE `suppliers` (
   `id` int NOT NULL,

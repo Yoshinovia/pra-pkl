@@ -166,7 +166,7 @@ export async function createSupplier(data: Omit<Supplier, 'id'>): Promise<Suppli
 
   const created = await res.json()
   return {
-    id: `SUP-${String(created.id).padStart(3, '0')}`,
+    id: created.id,  // Keep as number, not formatted string
     name: created.name,
     contact_person: created.contact_person,
     email: created.email,
@@ -189,7 +189,7 @@ export async function updateSupplier(id: string, data: Omit<Supplier, 'id'>): Pr
 
   const updated = await res.json()
   return {
-    id: `SUP-${String(updated.id).padStart(3, '0')}`,
+    id: updated.id,  // Keep as number, not formatted string
     name: updated.name,
     contact_person: updated.contact_person,
     email: updated.email,
@@ -223,8 +223,15 @@ export async function resolveAlert(id: number): Promise<boolean> {
 }
 
 export async function getActivityLogs(): Promise<ActivityLog[]> {
-  await delay()
-  return [..._logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  try {
+    const res = await fetch(`${API_BASE}/api/activity-logs`, {
+      credentials: 'include',
+      cache: 'no-store',
+    })
+    return handle<ActivityLog[]>(res)
+  } catch {
+    return []
+  }
 }
 
 export async function getMovements(): Promise<Movement[]> {
@@ -241,8 +248,11 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 }
 
 export async function getUsers(): Promise<User[]> {
-  await delay()
-  return users
+  const res = await fetch(`${API_BASE}/api/users`, {
+    credentials: 'include',
+    cache: 'no-store',
+  })
+  return handle<User[]>(res)
 }
 
 async function _log(userId: number, userName: string, action: string, target: string, details: string) {
@@ -250,5 +260,20 @@ async function _log(userId: number, userName: string, action: string, target: st
 }
 
 export async function logAction(userId: number, userName: string, action: string, target: string, details: string) {
-  await _log(userId, userName, action, target, details)
+  await fetch(`${API_BASE}/api/activity-logs/create`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, user_name: userName, action, target_entity: target, details }),
+  })
+}
+
+export async function createUser(name: string, email: string, password: string): Promise<{ id: number; message: string }> {
+  const res = await fetch(`${API_BASE}/api/users/create`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password, role: 'inventory_manager' }),
+  })
+  return handle<{ id: number; message: string }>(res)
 }
