@@ -135,48 +135,76 @@ export async function deleteProduct(id: string): Promise<boolean> {
   return true
 }
 
-export async function getSuppliers(search?: string, status?: string): Promise<Supplier[]> {
-  await delay()
-  let result = [..._suppliers]
-  if (search) {
-    const q = search.toLowerCase()
-    result = result.filter(s => s.name.toLowerCase().includes(q) || s.contact_person.toLowerCase().includes(q))
-  }
-  if (status && status !== 'All') result = result.filter(s => s.status === status)
-  return result
-}
+export async function getSuppliers(): Promise<Supplier[]> {
+  const res = await fetch(`${BASE_URL}/suppliers/get`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Gagal mengambil data supplier')
 
-export async function getSupplier(id: number): Promise<Supplier | null> {
-  await delay()
-  return _suppliers.find(s => s.id === id) || null
+  const rawData = await res.json()
+
+  return rawData.map((item: any) => ({
+    id: `SUP-${String(item.id).padStart(3, '0')}`,
+    name: item.name,
+    contact_person: item.contact_person,
+    email: item.email,
+    phone: item.phone,
+    products_supplied: item.products_supplied,
+    status: item.status,
+  }))
 }
 
 export async function createSupplier(data: Omit<Supplier, 'id'>): Promise<Supplier> {
-  await delay(200)
-  const supplier: Supplier = { ...data, id: _nextSupplierId++ }
-  _suppliers.push(supplier)
-  return supplier
-}
+  const res = await fetch(`${BASE_URL}/suppliers/create`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
 
-export async function updateSupplier(id: number, data: Partial<Supplier>): Promise<Supplier | null> {
-  await delay(200)
-  const idx = _suppliers.findIndex(s => s.id === id)
-  if (idx === -1) return null
-  _suppliers[idx] = { ..._suppliers[idx], ...data }
-  return _suppliers[idx]
-}
-
-export async function deleteSupplier(id: number): Promise<boolean> {
-  await delay(200)
-  const idx = _suppliers.findIndex(s => s.id === id)
-  if (idx === -1) return false
-  _suppliers.splice(idx, 1)
-  const linkedProducts = _products.filter(p => p.supplier_id === id)
-  for (const p of linkedProducts) {
-    const existingAlert = _alerts.find(a => a.product_id === p.id && !a.resolved)
-    if (existingAlert) existingAlert.resolved = true
+  if (!res.ok) {
+    const errorText = await res.text()
+    throw new Error(`Gagal membuat supplier: ${errorText}`)
   }
-  return true
+
+  const created = await res.json()
+  return {
+    id: `SUP-${String(created.id).padStart(3, '0')}`,
+    name: created.name,
+    contact_person: created.contact_person,
+    email: created.email,
+    phone: created.phone,
+    products_supplied: created.products_supplied,
+    status: created.status,
+  }
+}
+
+export async function updateSupplier(id: string, data: Omit<Supplier, 'id'>): Promise<Supplier | null> {
+  const numericId = id.replace('SUP-', '').replace(/^0+/, '')
+
+  const res = await fetch(`${BASE_URL}/suppliers/update?id=${numericId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) return null
+
+  const updated = await res.json()
+  return {
+    id: `SUP-${String(updated.id).padStart(3, '0')}`,
+    name: updated.name,
+    contact_person: updated.contact_person,
+    email: updated.email,
+    phone: updated.phone,
+    products_supplied: updated.products_supplied,
+    status: updated.status,
+  }
+}
+
+export async function deleteSupplier(id: string): Promise<boolean> {
+  const numericId = id.replace('SUP-', '').replace(/^0+/, '')
+  const res = await fetch(`${BASE_URL}/suppliers/delete?id=${numericId}`, {
+    method: 'DELETE',
+  })
+  return res.ok
 }
 
 export async function getAlerts(type?: 'low_stock' | 'expiring_soon'): Promise<StockAlert[]> {
