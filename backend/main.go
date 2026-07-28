@@ -51,10 +51,18 @@ func main() {
 
 	http.HandleFunc("/api/login", loginHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
+
+	// Route for Inventories
 	http.HandleFunc("/api/inventory", createInventoryHandler)
 	http.HandleFunc("/api/inventory/delete", deleteInventoryHandler)
 	http.HandleFunc("/api/inventory/get", getInventoriesHandler)
 	http.HandleFunc("/api/inventory/update", updateInventoryHandler)
+
+	// Route for Suppliers
+	http.HandleFunc("/api/suppliers/get", getSuppliersHandler)
+	http.HandleFunc("/api/suppliers/create", createSupplierHandler)
+	http.HandleFunc("/api/suppliers/update", updateSupplierHandler)
+	http.HandleFunc("/api/suppliers/delete", deleteSupplierHandler)
 	
 
 	fmt.Println("Backend Go berjalan di http://localhost:8080")

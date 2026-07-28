@@ -15,3 +15,6 @@ biar aman ajah
 buat role baru inventory_manager 
 
 67 yang admin@example langsung ke admin sekarang
+
+/////////////////////////////
+HARAP COPY AND PASTE CODE BARU DI db_invent.example KHUSUS TABLE suppliers | CREATE dan INSERT di PHPMYADMIN NYA MASING-MASING
