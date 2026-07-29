@@ -26,3 +26,14 @@ type UpdateInventoryRequest struct {
 	Price    *float64 `json:"price"`
 	Status   *string  `json:"status"`
 }
+
+type Movement struct {
+    ID          int    `json:"id"`
+    InventoryID int    `json:"inventory_id"`
+    ProductName string `json:"productName"`
+    Category    string `json:"category"`
+    Type        string `json:"type"`
+    Quantity    int    `json:"quantity"`
+    Reference   string `json:"reference"`
+    Date        string `json:"date"`
+}

@@ -1,5 +1,5 @@
 import type { Product, Supplier, StockAlert, ActivityLog, Movement, DashboardStats, User } from './types'
-import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
+import { users, products, suppliers, stockAlerts, activityLogs } from './data'
 import type { Inventory, InventoryPayload } from './types'
 
 function delay(ms: number = 150): Promise<void> {
@@ -11,7 +11,6 @@ let _products = [...products]
 let _suppliers = [...suppliers]
 let _alerts = [...stockAlerts]
 let _logs = [...activityLogs]
-let _movements = [...movements]
 let _nextProductId = 1
 let _nextSupplierId = 6
 let _nextAlertId = 7
