@@ -7,22 +7,23 @@ import (
 	"strconv"
 )
 
-func insertMovement(inventoryID int, movementType string, quantity int, reference string) error {
-  _, err := db.Exec(
-    `INSERT INTO movements (inventory_id, type, quantity, reference, movement_date) VALUES (?, ?, ?, ?, CURDATE())`,
-    inventoryID,
-    movementType,
-    quantity,
-    reference,
-  )
-  return err
-}
 
 func setCORSHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+}
+
+func insertMovement(inventoryID int, movementType string, quantity int, reference string) error {
+    _, err := db.Exec(
+        `INSERT INTO movements (inventory_id, type, quantity, reference, movement_date) VALUES (?, ?, ?, ?, CURDATE())`,
+        inventoryID,
+        movementType,
+        quantity,
+        reference,
+    )
+    return err
 }
 
 func createInventoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +73,6 @@ func createInventoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
 	created := Inventory{
 		ID:       int(newID),
 		Name:     req.Name,
@@ -134,29 +134,31 @@ func updateInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	if req.Category != nil {
 		current.Category = *req.Category
 	}
-	if req.Stock != nil {
-		current.Stock = *req.Stock
+	oldStock := current.Stock
+
+if req.Stock != nil {
+    newStock := *req.Stock
+    delta := newStock - oldStock
+
+    if delta > 0 {
+        if err := insertMovement(id, "Stock In", delta, "Stock adjustment"); err != nil {
+            http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else if delta < 0 {
+        if err := insertMovement(id, "Stock Out", -delta, "Stock adjustment"); err != nil {
+            http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    }
+
+    current.Stock = newStock
 	}
 	if req.Price != nil {
 		current.Price = *req.Price
 	}
 	if req.Status != nil {
 		current.Status = *req.Status
-	}
-
-		if req.Stock != nil {
-		delta := *req.Stock - current.Stock
-		if delta != 0 {
-			movementType := "Stock In"
-			if delta < 0 {
-				movementType = "Stock Out"
-				delta = -delta
-			}
-			if err := insertMovement(id, movementType, delta, "Stock adjustment"); err != nil {
-				http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
 	}
 
 	_, err = db.Exec(

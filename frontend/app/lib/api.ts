@@ -1,5 +1,5 @@
-import type { Product, Supplier, StockAlert, ActivityLog, Movement, User } from './types'
-import { users, products, suppliers, stockAlerts, activityLogs } from './data'
+import type { Product, Supplier, StockAlert, ActivityLog, Movement, DashboardStats, User } from './types'
+import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
 import type { Inventory, InventoryPayload } from './types'
 import { getStockLevel } from './types'
 
@@ -23,6 +23,14 @@ async function handle<T>(res: Response): Promise<T> {
     throw new Error(text || `Request gagal (${res.status})`)
   }
   return res.json() as Promise<T>
+}
+
+export type DashboardAlert = {
+  id: number
+  type: 'low_stock'
+  product_id: number
+  product_name: string
+  current_stock: number
 }
 
 export async function getInventories(): Promise<Inventory[]> {
@@ -241,36 +249,26 @@ export async function getMovements(): Promise<Movement[]> {
   })
   return handle<Movement[]>(res)
 }
-export interface DashboardAlert {
-  id: number
-  type: 'low_stock'
-  product_id: number
-  product_name: string
-  current_stock: number
-}
-
-export interface DashboardStats {
-  totalProducts: number
-  lowStockCount: number
-  recentAlerts: DashboardAlert[]
-}
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const items = await getInventories()
 
   const lowStock = items.filter(item => getStockLevel(item) !== 'In Stock')
 
-  const recentAlerts: DashboardAlert[] = lowStock.map(item => ({
+  const recentAlerts: StockAlert[] = lowStock.map(item => ({
     id: item.id,
-    type: 'low_stock',
-    product_id: item.id,
+    product_id: String(item.id),
     product_name: item.name,
+    type: 'low_stock',
     current_stock: item.stock,
+    triggered_at: new Date().toISOString(),
+    resolved: false,
   }))
 
   return {
     totalProducts: items.length,
     lowStockCount: lowStock.length,
+    expiringCount: 0,
     recentAlerts,
   }
 }
