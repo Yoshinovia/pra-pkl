@@ -59,8 +59,10 @@ export default function Home() {
         className='object-cover -z-10'/>
       <section className="w-full max-w-md bg-black/50 text-white backdrop-blur-2xl border border-white/20 py-10 px-8 rounded-2xl shadow-2xl">
         
-        <div className="flex items-center justify-center">
-          <h1 className="text-2xl font-semibold tracking-wide">LOGIN PAGE</h1>
+        <div className="flex flex-col items-center justify-center">
+          {/* <img src="images/jembatam.png" alt="logo" className="w-10 h-10 mb-2" /> */}
+          <Image src="/images/roxy.png" width={70} height={70} alt="logo" />
+          <h1 className="text-2xl font-semibold tracking-wide mt-2">WELCOME</h1>
         </div>
         
         {message && (

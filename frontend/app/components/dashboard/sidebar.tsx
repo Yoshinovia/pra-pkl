@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -37,9 +38,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-black/60 text-white backdrop-blur-2xl border-r border-white/20 flex flex-col shadow-2xl">
       <div className="p-6 border-b border-white/20">
-        <h1 className="text-xl font-bold tracking-wider text-[#edde53]">
-          Inventory Kreanova
-        </h1>
+        <Image src="/images/roxy.png" alt="logo" width={100} height={100} />
         {user && <p className="text-sm text-gray-300 mt-1">{user.name}</p>}
       </div>
 
