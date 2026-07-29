@@ -7,7 +7,6 @@ export type MovementType = "Stock In" | "Stock Out";
 export interface ReportRow {
   id: string;
   productName: string;
-  sku: string;
   category: string;
   type: MovementType;
   quantity: number;
@@ -93,7 +92,6 @@ export default function ReportsTable({ data }: ReportsTableProps) {
         <thead>
           <tr className="border-b border-white/20 text-sm text-gray-300 bg-black/30">
             <th className="p-4 font-medium">Product Name</th>
-            <th className="p-4 font-medium">SKU</th>
             <th className="p-4 font-medium">Category</th>
             <th className="p-4 font-medium">Type</th>
             <th className="p-4 font-medium">Quantity</th>
@@ -111,7 +109,6 @@ export default function ReportsTable({ data }: ReportsTableProps) {
                 <td className="p-4 font-medium text-white">
                   {row.productName}
                 </td>
-                <td className="p-4 text-gray-400">{row.sku}</td>
                 <td className="p-4 text-gray-300">{row.category}</td>
                 <td className="p-4">
                   <TypeBadge type={row.type} />
@@ -132,7 +129,7 @@ export default function ReportsTable({ data }: ReportsTableProps) {
             ))
           ) : (
             <tr>
-              <td colSpan={7} className="p-8 text-center text-gray-400">
+              <td colSpan={6} className="p-8 text-center text-gray-400">
                 No records match the selected filters.
               </td>
             </tr>

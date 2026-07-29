@@ -1,5 +1,5 @@
 import type { Product, Supplier, StockAlert, ActivityLog, Movement, User } from './types'
-import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
+import { users, products, suppliers, stockAlerts, activityLogs } from './data'
 import type { Inventory, InventoryPayload } from './types'
 import { getStockLevel } from './types'
 
@@ -12,7 +12,6 @@ let _products = [...products]
 let _suppliers = [...suppliers]
 let _alerts = [...stockAlerts]
 let _logs = [...activityLogs]
-let _movements = [...movements]
 let _nextProductId = 1
 let _nextSupplierId = 6
 let _nextAlertId = 7
@@ -236,8 +235,11 @@ export async function getActivityLogs(): Promise<ActivityLog[]> {
 }
 
 export async function getMovements(): Promise<Movement[]> {
-  await delay()
-  return _movements
+  const res = await fetch(`${API_BASE}/api/movements/get`, {
+    credentials: 'include',
+    cache: 'no-store',
+  })
+  return handle<Movement[]>(res)
 }
 export interface DashboardAlert {
   id: number

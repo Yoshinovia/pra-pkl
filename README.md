@@ -23,3 +23,6 @@ buat role baru inventory_manager
 
 /////////////////////////////
 HARAP COPY AND PASTE CODE BARU DI db_invent.example KHUSUS TABLE suppliers | CREATE dan INSERT di PHPMYADMIN NYA MASING-MASING
+
+////////////////////////////
+table baru copy dulu

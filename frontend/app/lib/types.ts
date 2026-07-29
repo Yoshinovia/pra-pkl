@@ -85,7 +85,6 @@ export interface ActivityLog {
 export interface Movement {
   id: string
   productName: string
-  sku: string
   category: string
   type: 'Stock In' | 'Stock Out'
   quantity: number
