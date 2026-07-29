@@ -1,4 +1,4 @@
-<h1>PROJECT GO PAK INUL</h1>
+<h1>PROJECT GO PAK ZAINUL</h1>
 <div align="center">
 <img src="./diagr.png" alt="diagram">
   <img src="./stasiun.png" alt="diagram">
