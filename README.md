@@ -3,27 +3,71 @@
 <img src="./diagr.png" alt="diagram">
   <img src="./stasiun.png" alt="diagram">
 </div>
+# PROJECT GO PAK INUL
 
-running on frontend npm run dev
-running on backend go run main.go
+## Prerequisites
 
-db_invent => users 
-import db_invent terlebih dahulu, ganti .example menjadi .sql
+- Go installed
+- Node.js and npm installed
+- MySQL / MariaDB installed
 
-////////////////////////////////
-go get github.com/joho/godotenv
+## 1. Database setup
 
-godot env for backend
-/////////////////////////////
+1. Create a database named `db_invent`.
+2. Import `db_invent.sql` into MySQL.
+   - If you only have `db_invent.example`, copy it to `db_invent.sql` first.
+   - Import using phpMyAdmin or MySQL CLI.
 
-lihat env.example kemudian copy filenya menjadi .env denagan nama user, pass dan db yang sesuai man teman
-biar aman ajah
-buat role baru inventory_manager 
+## 2. Backend setup
 
-67 yang admin@example langsung ke admin sekarang
+1. Go to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Create a `.env` file in `backend/` with these values:
+   ```env
+   DB_USER=root
+   DB_PASS=
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_NAME=db_invent
+   SERVER_PORT=8080
+   ```
+3. Run the backend:
+   ```bash
+   go run .
+   ```
 
-/////////////////////////////
-HARAP COPY AND PASTE CODE BARU DI db_invent.example KHUSUS TABLE suppliers | CREATE dan INSERT di PHPMYADMIN NYA MASING-MASING
+## 3. Frontend setup
 
-////////////////////////////
-table baru copy dulu
+1. Go to the frontend folder:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   npm install lucide-react
+   ```
+3. Run the frontend:
+   ```bash
+   npm run dev
+   ```
+
+## 4. Open the app
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8080`
+
+## 5. Default credentials
+
+- Admin: `admin@example.com`
+- Password: `testingajah123`
+
+## Notes
+
+- `backend/.env` should not be committed.
+- If your MySQL credentials are different, update `backend/.env`.
+- If you want, create `backend/.env.example` as a template file for others.
+```
+

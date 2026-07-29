@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Jul 22, 2026 at 01:27 AM
--- Server version: 8.0.30
--- PHP Version: 8.2.29
+-- Host: 127.0.0.1
+-- Generation Time: Jul 29, 2026 at 12:35 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,74 +24,143 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `activity_logs`
+--
+
+CREATE TABLE `activity_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `user_name` varchar(255) DEFAULT NULL,
+  `action` varchar(100) DEFAULT NULL,
+  `target_entity` varchar(100) DEFAULT NULL,
+  `details` text DEFAULT NULL,
+  `timestamp` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `user_name`, `action`, `target_entity`, `details`, `timestamp`) VALUES
+(6, 1, 'si admin', 'Create User', 'User', 'Created inventory manager account for manager (manager@gmail.com)', '2026-07-29 17:24:59');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `inventory`
 --
 
-
-//////////////////////// ALTER TABLE ////////////////////////////
-
-ALTER TABLE users ADD COLUMN name VARCHAR(255);
-ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'inventory_manager';
-ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
-
-//////////////////////// CREATE TABLE ////////////////////////////
-CREATE TABLE `movements` (
-  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `inventory_id` INT NOT NULL,
-  `type` ENUM('Stock In','Stock Out') NOT NULL,
-  `quantity` INT NOT NULL,
-  `reference` VARCHAR(255) DEFAULT NULL,
-  `movement_date` DATE NOT NULL,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`inventory_id`) REFERENCES `inventory`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE IF NOT EXISTS activity_logs (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  user_name VARCHAR(255) NOT NULL,
-  action VARCHAR(100) NOT NULL,
-  target_entity VARCHAR(100) NOT NULL,
-  details TEXT,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE `suppliers` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `contact_person` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone` varchar(50) NOT NULL,
-  `products_supplied` int NOT NULL DEFAULT '0',
-  `status` varchar(50) NOT NULL DEFAULT 'active'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `products_supplied`, `status`) VALUES
-(1, 'PT ABCD', '+62081234567890', 'email@gmail.com', '+62081234567890', 5, 'active'),
-(2, 'PT ABCDE', '+62081234567890', 'email1@gmail.com', '+62081234567890', 5, 'active');
-
-
 CREATE TABLE `inventory` (
-  `id` int PRIMARY KEY NOT NULL,
+  `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `category` varchar(100) NOT NULL,
-  `stock` int NOT NULL DEFAULT '0',
-  `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `stock` int(11) NOT NULL DEFAULT 0,
+  `price` decimal(12,2) NOT NULL DEFAULT 0.00,
   `status` varchar(50) NOT NULL DEFAULT 'active',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory`
 --
 
 INSERT INTO `inventory` (`id`, `name`, `category`, `stock`, `price`, `status`, `created_at`) VALUES
-(1, 'test1', 'test1', 5, '10000.00', 'active', '2026-07-22 01:26:47');
+(1, 'OBH', 'Prescription Medicine', 201, 10000.00, 'active', '2026-07-29 04:42:18'),
+(2, 'Tolak Angin', 'Vitamins & Supplements', 220, 2000.00, 'active', '2026-07-29 04:43:36'),
+(3, 'Medkit', 'First Aid', 16, 50000.00, 'active', '2026-07-29 05:37:14'),
+(4, 'Paracetamol 500mg', 'Analgesics', 120, 4500.00, 'active', '2026-07-29 08:00:00'),
+(5, 'Cough Syrup', 'Cold & Flu', 75, 38000.00, 'active', '2026-07-29 08:05:00'),
+(6, 'Antiseptic Spray', 'First Aid', 45, 25000.00, 'active', '2026-07-29 08:10:00'),
+(7, 'Vitamin C', 'Vitamins & Supplements', 140, 15000.00, 'active', '2026-07-29 08:15:00'),
+(8, 'Bandage Roll', 'Medical Supplies', 60, 8000.00, 'active', '2026-07-29 08:20:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `movements`
+--
+
+CREATE TABLE `movements` (
+  `id` int(11) NOT NULL,
+  `inventory_id` int(11) NOT NULL,
+  `type` enum('Stock In','Stock Out') NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `reference` varchar(255) DEFAULT NULL,
+  `movement_date` date NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `movements`
+--
+
+INSERT INTO `movements` (`id`, `inventory_id`, `type`, `quantity`, `reference`, `movement_date`, `created_at`) VALUES
+(23, 1, 'Stock In', 1, 'Stock adjustment', '2026-07-29', '2026-07-29 17:30:22'),
+(24, 2, 'Stock In', 20, 'Stock adjustment', '2026-07-29', '2026-07-29 17:30:38'),
+(25, 4, 'Stock In', 100, 'Initial stock', '2026-07-29', '2026-07-29 09:00:00'),
+(26, 5, 'Stock In', 50, 'Initial stock', '2026-07-29', '2026-07-29 09:05:00'),
+(27, 6, 'Stock In', 40, 'Initial stock', '2026-07-29', '2026-07-29 09:10:00'),
+(28, 7, 'Stock In', 125, 'Initial stock', '2026-07-29', '2026-07-29 09:15:00'),
+(29, 8, 'Stock In', 60, 'Initial stock', '2026-07-29', '2026-07-29 09:20:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `suppliers`
+--
+
+CREATE TABLE `suppliers` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `contact_person` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(50) NOT NULL,
+  `products_supplied` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(50) NOT NULL DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `products_supplied`, `status`) VALUES
+(1, 'Pt sejahtera', 'pak sehat', 'sehat@gmail.com', '01293816382', 1000, 'active'),
+(2, 'Apotek Sehat Sentosa', 'Ayu Maharani', 'ayu@apotek.co.id', '081234567890', 5, 'active'),
+(3, 'PT Farmasi Nusantara', 'Dwi Santoso', 'dwi@farmasinusantara.id', '081298765432', 8, 'active');
+
+
+-- --------------------------------------------------------
+
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `role` enum('admin','inventory_manager') NOT NULL DEFAULT 'inventory_manager',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`) VALUES
+(1, 'si admin', 'admin@example.com', 'testingajah123', 'admin', '2026-07-28 07:45:49'),
+(8, 'manager', 'manager@gmail.com', '12345678', 'inventory_manager', '2026-07-29 10:24:59');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `inventory`
@@ -100,14 +169,73 @@ ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `movements`
+--
+ALTER TABLE `movements`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inventory_id` (`inventory_id`);
+
+--
+-- Indexes for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `movements`
+--
+ALTER TABLE `movements`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD CONSTRAINT `activity_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `movements`
+--
+ALTER TABLE `movements`
+  ADD CONSTRAINT `movements_ibfk_1` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

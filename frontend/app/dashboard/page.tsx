@@ -39,7 +39,7 @@ export default async function DashboardHome() {
         <div className="bg-black/50 text-white backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
           <div className="p-5 border-b border-white/20 bg-black/20 flex justify-between items-center">
             <h3 className="font-semibold text-lg tracking-wide">Action Required: Low Stock</h3>
-            <Link href="/alerts" className="text-sm text-[#edde53] font-medium hover:underline">View All Alerts</Link>
+            {/* <Link href="/alerts" className="text-sm text-[#edde53] font-medium hover:underline">View All Alerts</Link> */}
           </div>
 
           <table className="w-full text-left border-collapse">
