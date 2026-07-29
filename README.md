@@ -3,7 +3,7 @@
 <img src="./diagr.png" alt="diagram">
   <img src="./stasiun.png" alt="diagram">
 </div>
-# PROJECT GO PAK INUL
+# PROJECT GO PAK ZAINUL
 
 ## Prerequisites
 
@@ -69,5 +69,5 @@
 - `backend/.env` should not be committed.
 - If your MySQL credentials are different, update `backend/.env`.
 - If you want, create `backend/.env.example` as a template file for others.
-```
+
 
