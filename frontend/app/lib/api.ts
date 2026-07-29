@@ -1,6 +1,7 @@
-import type { Product, Supplier, StockAlert, ActivityLog, Movement, DashboardStats, User } from './types'
-import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
+import type { Product, Supplier, StockAlert, ActivityLog, Movement, User } from './types'
+import { users, products, suppliers, stockAlerts, activityLogs } from './data'
 import type { Inventory, InventoryPayload } from './types'
+import { getStockLevel } from './types'
 
 function delay(ms: number = 150): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
@@ -11,7 +12,6 @@ let _products = [...products]
 let _suppliers = [...suppliers]
 let _alerts = [...stockAlerts]
 let _logs = [...activityLogs]
-let _movements = [...movements]
 let _nextProductId = 1
 let _nextSupplierId = 6
 let _nextAlertId = 7
@@ -235,16 +235,44 @@ export async function getActivityLogs(): Promise<ActivityLog[]> {
 }
 
 export async function getMovements(): Promise<Movement[]> {
-  await delay()
-  return _movements
+  const res = await fetch(`${API_BASE}/api/movements/get`, {
+    credentials: 'include',
+    cache: 'no-store',
+  })
+  return handle<Movement[]>(res)
+}
+export interface DashboardAlert {
+  id: number
+  type: 'low_stock'
+  product_id: number
+  product_name: string
+  current_stock: number
+}
+
+export interface DashboardStats {
+  totalProducts: number
+  lowStockCount: number
+  recentAlerts: DashboardAlert[]
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  await delay()
-  const lowStockCount = _products.filter(p => p.quantity > 0 && p.quantity <= p.reorder_point).length
-  const expiringCount = _alerts.filter(a => a.type === 'expiring_soon' && !a.resolved).length
-  const recentAlerts = _alerts.filter(a => !a.resolved).sort((a, b) => new Date(b.triggered_at).getTime() - new Date(a.triggered_at).getTime()).slice(0, 5)
-  return { totalProducts: _products.length, lowStockCount, expiringCount, recentAlerts }
+  const items = await getInventories()
+
+  const lowStock = items.filter(item => getStockLevel(item) !== 'In Stock')
+
+  const recentAlerts: DashboardAlert[] = lowStock.map(item => ({
+    id: item.id,
+    type: 'low_stock',
+    product_id: item.id,
+    product_name: item.name,
+    current_stock: item.stock,
+  }))
+
+  return {
+    totalProducts: items.length,
+    lowStockCount: lowStock.length,
+    recentAlerts,
+  }
 }
 
 export async function getUsers(): Promise<User[]> {

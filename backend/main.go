@@ -70,6 +70,9 @@ func main() {
 	http.HandleFunc("/api/activity-logs", getActivityLogsHandler)
 	http.HandleFunc("/api/activity-logs/create", createActivityLogHandler)
 
+	//route for Movements
+	http.HandleFunc("/api/movements/get", getMovementsHandler)
+	
 	fmt.Println("Backend Go berjalan di http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

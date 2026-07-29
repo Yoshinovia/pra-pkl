@@ -59,7 +59,7 @@ useEffect(() => {
         </header>
 
         {message && (
-          <div className="bg-green-500/20 text-green-300 border border-green-500/30 p-4 rounded-xl mb-6 text-sm">{message}</div>
+          <div className="bg-green-500/20 text-black border border-green-500/30 p-4 rounded-xl mb-6 text-sm">{message}</div>
         )}
 
         <div className="bg-black/50 text-white backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden mb-8">

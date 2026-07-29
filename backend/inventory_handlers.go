@@ -7,6 +7,17 @@ import (
 	"strconv"
 )
 
+func insertMovement(inventoryID int, movementType string, quantity int, reference string) error {
+  _, err := db.Exec(
+    `INSERT INTO movements (inventory_id, type, quantity, reference, movement_date) VALUES (?, ?, ?, ?, CURDATE())`,
+    inventoryID,
+    movementType,
+    quantity,
+    reference,
+  )
+  return err
+}
+
 func setCORSHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -53,6 +64,13 @@ func createInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Gagal mengambil ID baru: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if req.Stock > 0 {
+		if err := insertMovement(int(newID), "Stock In", req.Stock, "Initial stock"); err != nil {
+			http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	created := Inventory{
@@ -124,6 +142,21 @@ func updateInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Status != nil {
 		current.Status = *req.Status
+	}
+
+		if req.Stock != nil {
+		delta := *req.Stock - current.Stock
+		if delta != 0 {
+			movementType := "Stock In"
+			if delta < 0 {
+				movementType = "Stock Out"
+				delta = -delta
+			}
+			if err := insertMovement(id, movementType, delta, "Stock adjustment"); err != nil {
+				http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
 	}
 
 	_, err = db.Exec(

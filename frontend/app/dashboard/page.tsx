@@ -2,9 +2,11 @@ import React from 'react';
 import Sidebar from '../components/dashboard/sidebar';
 import Link from 'next/link';
 import { getDashboardStats } from '../lib/api';
+import LowStockAlert from './low-stock-alert';
 
 export default async function DashboardHome() {
   const stats = await getDashboardStats();
+  const lowStockAlerts = stats.recentAlerts.filter(a => a.type === 'low_stock');
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-r from-white to-[#edde53]">
@@ -21,7 +23,9 @@ export default async function DashboardHome() {
           </Link>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <LowStockAlert alerts={lowStockAlerts} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20">
             <h3 className="text-gray-300 text-sm font-semibold mb-1">Total Products</h3>
             <p className="text-3xl font-bold text-white">{stats.totalProducts.toLocaleString()}</p>
@@ -29,10 +33,6 @@ export default async function DashboardHome() {
           <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20 border-l-4 border-l-red-500">
             <h3 className="text-red-400 text-sm font-semibold mb-1">Low Stock Alerts</h3>
             <p className="text-3xl font-bold text-red-400">{stats.lowStockCount}</p>
-          </div>
-          <div className="bg-black/50 text-white backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20 border-l-4 border-l-orange-400">
-            <h3 className="text-orange-300 text-sm font-semibold mb-1">Expiring Soon</h3>
-            <p className="text-3xl font-bold text-orange-300">{stats.expiringCount}</p>
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export default async function DashboardHome() {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {stats.recentAlerts.filter(a => a.type === 'low_stock').map((alert) => (
+              {lowStockAlerts.map((alert) => (
                 <tr key={alert.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
                   <td className="p-4 font-medium text-white">{alert.product_name}</td>
                   <td className="p-4 text-gray-400">{alert.product_id}</td>
@@ -62,9 +62,9 @@ export default async function DashboardHome() {
                   </td>
                 </tr>
               ))}
-              {stats.recentAlerts.filter(a => a.type === 'low_stock').length === 0 && (
+              {lowStockAlerts.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-400">No low stock alerts.</td>
+                  <td colSpan={4} className="p-8 text-center text-gray-400">No low stock alerts.</td>
                 </tr>
               )}
             </tbody>

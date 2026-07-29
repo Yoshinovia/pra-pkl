@@ -8,7 +8,6 @@ const navItems = [
   { href: "/inventory", label: "View Inventory" },
   { href: "/suppliers", label: "Manage Suppliers" },
   { href: "/reports", label: "Generate Reports" },
-  { href: "/alerts", label: "Stock Alerts" },
 ];
 
 export default function Sidebar() {

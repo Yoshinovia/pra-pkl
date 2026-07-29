@@ -1,3 +1,8 @@
+<h1>PROJECT GO PAK INUL</h1>
+<div align="center">
+<img src="./diagr.png" alt="diagram">
+</div>
+
 running on frontend npm run dev
 running on backend go run main.go
 
@@ -18,3 +23,6 @@ buat role baru inventory_manager
 
 /////////////////////////////
 HARAP COPY AND PASTE CODE BARU DI db_invent.example KHUSUS TABLE suppliers | CREATE dan INSERT di PHPMYADMIN NYA MASING-MASING
+
+////////////////////////////
+table baru copy dulu
