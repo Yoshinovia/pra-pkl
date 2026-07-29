@@ -20,5 +20,5 @@ buat role baru inventory_manager
 HARAP COPY AND PASTE CODE BARU DI db_invent.example KHUSUS TABLE suppliers | CREATE dan INSERT di PHPMYADMIN NYA MASING-MASING
 
 <div align="center">
-<img src="./diagr.png" width="300" height="40 alt="diagram">
+<img src="./diagr.png" alt="diagram">
 </div>
