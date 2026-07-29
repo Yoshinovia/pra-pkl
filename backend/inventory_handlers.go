@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+
 func setCORSHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -133,32 +134,31 @@ func updateInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	if req.Category != nil {
 		current.Category = *req.Category
 	}
-	if req.Stock != nil {
-		current.Stock = *req.Stock
+	oldStock := current.Stock
+
+if req.Stock != nil {
+    newStock := *req.Stock
+    delta := newStock - oldStock
+
+    if delta > 0 {
+        if err := insertMovement(id, "Stock In", delta, "Stock adjustment"); err != nil {
+            http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else if delta < 0 {
+        if err := insertMovement(id, "Stock Out", -delta, "Stock adjustment"); err != nil {
+            http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    }
+
+    current.Stock = newStock
 	}
 	if req.Price != nil {
 		current.Price = *req.Price
 	}
 	if req.Status != nil {
 		current.Status = *req.Status
-	}
-
-	oldStock := current.Stock
-
-	if req.Stock != nil {
-		current.Stock = *req.Stock
-		delta := current.Stock - oldStock
-		if delta > 0 {
-			if err := insertMovement(id, "Stock In", delta, "Stock adjustment"); err != nil {
-				http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
-		} else if delta < 0 {
-			if err := insertMovement(id, "Stock Out", -delta, "Stock adjustment"); err != nil {
-				http.Error(w, "Gagal menyimpan movement: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
 	}
 
 	_, err = db.Exec(

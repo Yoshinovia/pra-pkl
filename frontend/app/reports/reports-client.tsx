@@ -22,8 +22,8 @@ export default function ReportsClient({ data }: ReportsClientProps) {
   const totalOut = filtered.filter(r => r.type === 'Stock Out').reduce((sum, r) => sum + r.quantity, 0)
 
   function exportCSV() {
-    const headers = ['Product Name,SKU,Category,Type,Quantity,Date,Reference']
-    const rows = filtered.map(r => `${r.productName},${r.sku},${r.category},${r.type},${r.quantity},${r.date},${r.reference}`)
+    const headers = ['Product Name,Category,Type,Quantity,Date,Reference']
+    const rows = filtered.map(r => `${r.productName},${r.category},${r.type},${r.quantity},${r.date},${r.reference}`)
     const csv = [...headers, ...rows].join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
@@ -37,7 +37,7 @@ export default function ReportsClient({ data }: ReportsClientProps) {
   function exportPDF() {
     const printWindow = window.open('', '_blank')
     if (!printWindow) return
-    const rows = filtered.map(r => `<tr><td>${r.productName}</td><td>${r.sku}</td><td>${r.category}</td><td>${r.type}</td><td>${r.quantity}</td><td>${r.date}</td><td>${r.reference}</td></tr>`).join('')
+    const rows = filtered.map(r => `<tr><td>${r.productName}</td><td>${r.category}</td><td>${r.type}</td><td>${r.quantity}</td><td>${r.date}</td><td>${r.reference}</td></tr>`).join('')
     printWindow.document.write(`
       <html><head><title>Inventory Report</title>
       <style>body{font-family:sans-serif;padding:40px}
@@ -58,7 +58,7 @@ export default function ReportsClient({ data }: ReportsClientProps) {
         <div class="stat"><div class="stat-label">Total Stock Out</div><div class="stat-value">-${totalOut}</div></div>
         <div class="stat"><div class="stat-label">Net Movement</div><div class="stat-value">${totalIn - totalOut}</div></div>
       </div>
-      <table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Type</th><th>Qty</th><th>Date</th><th>Ref</th></tr></thead><tbody>${rows}</tbody></table>
+      <table><thead><tr><th>Product</th><th>Category</th><th>Type</th><th>Qty</th><th>Date</th><th>Ref</th></tr></thead><tbody>${rows}</tbody></table>
       </body></html>`)
     printWindow.document.close()
     printWindow.print()

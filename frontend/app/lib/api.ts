@@ -1,6 +1,7 @@
 import type { Product, Supplier, StockAlert, ActivityLog, Movement, DashboardStats, User } from './types'
-import { users, products, suppliers, stockAlerts, activityLogs } from './data'
+import { users, products, suppliers, stockAlerts, activityLogs, movements } from './data'
 import type { Inventory, InventoryPayload } from './types'
+import { getStockLevel } from './types'
 
 function delay(ms: number = 150): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
@@ -22,6 +23,14 @@ async function handle<T>(res: Response): Promise<T> {
     throw new Error(text || `Request gagal (${res.status})`)
   }
   return res.json() as Promise<T>
+}
+
+export type DashboardAlert = {
+  id: number
+  type: 'low_stock'
+  product_id: number
+  product_name: string
+  current_stock: number
 }
 
 export async function getInventories(): Promise<Inventory[]> {
@@ -234,16 +243,34 @@ export async function getActivityLogs(): Promise<ActivityLog[]> {
 }
 
 export async function getMovements(): Promise<Movement[]> {
-  await delay()
-  return _movements
+  const res = await fetch(`${API_BASE}/api/movements/get`, {
+    credentials: 'include',
+    cache: 'no-store',
+  })
+  return handle<Movement[]>(res)
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  await delay()
-  const lowStockCount = _products.filter(p => p.quantity > 0 && p.quantity <= p.reorder_point).length
-  const expiringCount = _alerts.filter(a => a.type === 'expiring_soon' && !a.resolved).length
-  const recentAlerts = _alerts.filter(a => !a.resolved).sort((a, b) => new Date(b.triggered_at).getTime() - new Date(a.triggered_at).getTime()).slice(0, 5)
-  return { totalProducts: _products.length, lowStockCount, expiringCount, recentAlerts }
+  const items = await getInventories()
+
+  const lowStock = items.filter(item => getStockLevel(item) !== 'In Stock')
+
+  const recentAlerts: StockAlert[] = lowStock.map(item => ({
+    id: item.id,
+    product_id: String(item.id),
+    product_name: item.name,
+    type: 'low_stock',
+    current_stock: item.stock,
+    triggered_at: new Date().toISOString(),
+    resolved: false,
+  }))
+
+  return {
+    totalProducts: items.length,
+    lowStockCount: lowStock.length,
+    expiringCount: 0,
+    recentAlerts,
+  }
 }
 
 export async function getUsers(): Promise<User[]> {
