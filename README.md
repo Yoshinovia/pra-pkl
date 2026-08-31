@@ -1,3 +1,8 @@
+## Contribute
+<a href="https://github.com/Yoshinovia/pra-pkl/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Yoshinovia/pra-pkl" />
+</a>
+
 <h1>PROJECT GO PAK ZAINUL</h1>
 <div align="center">
 <img src="./diagr.png" alt="diagram">
@@ -69,10 +74,3 @@
 - `backend/.env` should not be committed.
 - If your MySQL credentials are different, update `backend/.env`.
 - If you want, create `backend/.env.example` as a template file for others.
-
-
-## Contribute
-<a href="https://github.com/Yoshinovia/pra-pkl/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Yoshinovia/pra-pkl" />
-</a>
-
