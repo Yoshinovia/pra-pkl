@@ -1,4 +1,4 @@
-## Contribute
+## Contributors
 <a href="https://github.com/Yoshinovia/pra-pkl/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Yoshinovia/pra-pkl" />
 </a>
